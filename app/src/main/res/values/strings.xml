@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">Aadhar UID</string>
+
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    <string name="barcode_scanner_error">Please install barcode scanner</string>
+</resources>
