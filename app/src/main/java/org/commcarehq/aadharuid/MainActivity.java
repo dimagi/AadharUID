@@ -50,10 +50,28 @@ public class MainActivity extends ActionBarActivity {
     }
 
     private void returnOdkResult(String result) {
+        ScanResult scanResult = new ScanResult(result);
         Intent data = new Intent();
 
         Bundle responses = new Bundle();
-        responses.putString("example_id", "Example text");
+        responses.putString("rawString", scanResult.rawString);
+        responses.putString("uid", scanResult.uid);
+        responses.putString("name", scanResult.name);
+        responses.putString("gender", scanResult.gender);
+        responses.putString("yob", scanResult.yob);
+        responses.putString("co", scanResult.co);
+        responses.putString("house", scanResult.house);
+        responses.putString("street", scanResult.street);
+        responses.putString("lm", scanResult.lm);
+        responses.putString("loc", scanResult.loc);
+        responses.putString("vtc", scanResult.vtc);
+        responses.putString("po", scanResult.po);
+        responses.putString("dist", scanResult.dist);
+        responses.putString("subdist", scanResult.subdist);
+        responses.putString("state", scanResult.state);
+        responses.putString("pc", scanResult.pc);
+        responses.putString("dob", scanResult.dob);
+
         data.putExtra("odk_intent_bundle", responses);
 
         // this is the value that CommCare will use as the result of the intent question
