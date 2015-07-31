@@ -38,6 +38,15 @@ public class ScanResult {
     public final String pc;  // postal code
     public final String dob;  // date of birth
 
+    private String getAttributeOrEmptyString(NamedNodeMap attributes, String attributeName) {
+        Node node = attributes.getNamedItem(attributeName);
+        if (node != null) {
+            return node.getTextContent();
+        } else {
+            return "";
+        }
+    }
+
     public ScanResult(String input) {
         rawString = input;
         // copied from http://www.java-samples.com/showtutorial.php?tutorialid=152
@@ -58,22 +67,22 @@ public class ScanResult {
         if (dom != null) {
             Node node = dom.getChildNodes().item(0);
             NamedNodeMap attributes = node.getAttributes();
-            uid = attributes.getNamedItem("uid").getTextContent();
-            name = attributes.getNamedItem("name").getTextContent();
-            gender = attributes.getNamedItem("gender").getTextContent();
-            yob = attributes.getNamedItem("yob").getTextContent();
-            co = attributes.getNamedItem("co").getTextContent();
-            house = attributes.getNamedItem("house").getTextContent();
-            street = attributes.getNamedItem("street").getTextContent();
-            lm = attributes.getNamedItem("lm").getTextContent();
-            loc = attributes.getNamedItem("loc").getTextContent();
-            vtc = attributes.getNamedItem("vtc").getTextContent();
-            po = attributes.getNamedItem("po").getTextContent();
-            dist = attributes.getNamedItem("dist").getTextContent();
-            subdist = attributes.getNamedItem("subdist").getTextContent();
-            state = attributes.getNamedItem("state").getTextContent();
-            pc = attributes.getNamedItem("pc").getTextContent();
-            dob = attributes.getNamedItem("dob").getTextContent();
+            uid = getAttributeOrEmptyString(attributes, "uid");
+            name = getAttributeOrEmptyString(attributes, "name");
+            gender = getAttributeOrEmptyString(attributes, "gender");
+            yob = getAttributeOrEmptyString(attributes, "yob");
+            co = getAttributeOrEmptyString(attributes, "co");
+            house = getAttributeOrEmptyString(attributes, "house");
+            street = getAttributeOrEmptyString(attributes, "street");
+            lm = getAttributeOrEmptyString(attributes, "lm");
+            loc = getAttributeOrEmptyString(attributes, "loc");
+            vtc = getAttributeOrEmptyString(attributes, "vtc");
+            po = getAttributeOrEmptyString(attributes, "po");
+            dist = getAttributeOrEmptyString(attributes, "dist");
+            subdist = getAttributeOrEmptyString(attributes, "subdist");
+            state = getAttributeOrEmptyString(attributes, "state");
+            pc = getAttributeOrEmptyString(attributes, "pc");
+            dob = getAttributeOrEmptyString(attributes, "dob");
         } else {
             uid = rawString;
             name = "";
