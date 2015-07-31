@@ -12,7 +12,7 @@ public class ScanResultTest extends TestCase {
                         " yob=\"YYYY\" co=\"D/O: Father Name\" house=\"house num\"" +
                         " street=\"street name\" lm=\"address\" loc=\"neighborhood\" vtc=\"village\"" +
                         " po=\"city\" dist=\"district\" subdist=\"region\" state=\"state\"" +
-                        " pc=\"postalcode\" dob=\"dd/mm/yyyy\"/>"
+                        " pc=\"postalcode\" dob=\"23/11/1999\"/>"
         );
         assertEquals(scanResult.uid, "123456789012");
         assertEquals(scanResult.name, "First Last");
@@ -29,7 +29,7 @@ public class ScanResultTest extends TestCase {
         assertEquals(scanResult.subdist, "region");
         assertEquals(scanResult.state, "state");
         assertEquals(scanResult.pc, "postalcode");
-        assertEquals(scanResult.dob, "dd/mm/yyyy");
+        assertEquals(scanResult.dob, "1999-11-23");
     }
 
     public void testJustUID() {

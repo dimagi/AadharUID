@@ -7,6 +7,9 @@ import org.xml.sax.SAXException;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -82,7 +85,13 @@ public class ScanResult {
             subdist = getAttributeOrEmptyString(attributes, "subdist");
             state = getAttributeOrEmptyString(attributes, "state");
             pc = getAttributeOrEmptyString(attributes, "pc");
-            dob = getAttributeOrEmptyString(attributes, "dob");
+            String rawDob = getAttributeOrEmptyString(attributes, "dob");
+            try {
+                rawDob = formatDate(rawDob);
+            } catch (ParseException e) {
+                System.err.println("Expected dob to be in dd/mm/yyyy format, got " + rawDob);
+            }
+            dob = rawDob;
         } else {
             uid = rawString;
             name = "";
@@ -101,5 +110,12 @@ public class ScanResult {
             pc = "";
             dob = "";
         }
+    }
+
+    private String formatDate(String rawDateString) throws ParseException {
+        SimpleDateFormat fromFormat = new SimpleDateFormat("dd/MM/yyyy");
+        SimpleDateFormat toFormat = new SimpleDateFormat("yyyy-MM-dd");
+        Date date = fromFormat.parse(rawDateString);
+        return toFormat.format(date);
     }
 }
