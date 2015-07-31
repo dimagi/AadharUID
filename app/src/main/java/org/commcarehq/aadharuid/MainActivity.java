@@ -27,7 +27,6 @@ public class MainActivity extends ActionBarActivity {
             switch (resultCode) {
                 case RESULT_OK:
                     String result = data.getStringExtra("SCAN_RESULT");
-                    Toast.makeText(this, result, Toast.LENGTH_SHORT).show();
                     returnOdkResult(result);
                     break;
                 case RESULT_CANCELED:
