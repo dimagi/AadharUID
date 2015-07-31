@@ -51,4 +51,25 @@ public class ScanResultTest extends TestCase {
         assertEquals(scanResult.pc, "");
         assertEquals(scanResult.dob, "");
     }
+
+    public void testBizarreInput() {
+        // Is this the behavior we want?
+        ScanResult scanResult = new ScanResult("http://i.imgur.com/XpgmoU1.jpg");
+        assertEquals(scanResult.uid, "http://i.imgur.com/XpgmoU1.jpg");
+        assertEquals(scanResult.name, "");
+        assertEquals(scanResult.gender, "");
+        assertEquals(scanResult.yob, "");
+        assertEquals(scanResult.co, "");
+        assertEquals(scanResult.house, "");
+        assertEquals(scanResult.street, "");
+        assertEquals(scanResult.lm, "");
+        assertEquals(scanResult.loc, "");
+        assertEquals(scanResult.vtc, "");
+        assertEquals(scanResult.po, "");
+        assertEquals(scanResult.dist, "");
+        assertEquals(scanResult.subdist, "");
+        assertEquals(scanResult.state, "");
+        assertEquals(scanResult.pc, "");
+        assertEquals(scanResult.dob, "");
+    }
 }
