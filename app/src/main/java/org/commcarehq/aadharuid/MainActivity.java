@@ -73,8 +73,9 @@ public class MainActivity extends ActionBarActivity {
 
         data.putExtra("odk_intent_bundle", responses);
 
-        // this is the value that CommCare will use as the result of the intent question
-        data.putExtra("odk_intent_data", result);
+        // We do not want anything to display directly to the user when this returns to ODK
+        // For the full string, use odk_intent_bundle.rawString
+        data.putExtra("odk_intent_data", "");
         setResult(Activity.RESULT_OK, data);
         finish();
     }
