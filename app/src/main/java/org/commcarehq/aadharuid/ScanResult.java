@@ -91,7 +91,7 @@ public class ScanResult {
             try {
                 rawDob = formatDate(rawDob);
             } catch (ParseException e) {
-                System.err.println("Expected dob to be in dd/mm/yyyy format, got " + rawDob);
+                System.err.println("Expected dob to be in dd/mm/yyyy or yyyy-mm-dd format, got " + rawDob);
             }
             dob = rawDob;
         } else {
@@ -115,9 +115,26 @@ public class ScanResult {
     }
 
     private String formatDate(String rawDateString) throws ParseException {
-        SimpleDateFormat fromFormat = new SimpleDateFormat("dd/MM/yyyy");
         SimpleDateFormat toFormat = new SimpleDateFormat("yyyy-MM-dd");
-        Date date = fromFormat.parse(rawDateString);
-        return toFormat.format(date);
+        SimpleDateFormat[] possibleFormats = {
+                new SimpleDateFormat("dd/MM/yyyy"),
+                new SimpleDateFormat("yyyy-MM-dd")};
+        Date date = null;
+        ParseException parseException = null;
+        for (SimpleDateFormat fromFormat : possibleFormats) {
+            try {
+                date = fromFormat.parse(rawDateString);
+                break;
+            } catch (ParseException e) {
+                parseException = e;
+            }
+        }
+        if (date != null) {
+            return toFormat.format(date);
+        } else if (parseException != null){
+            throw parseException;
+        } else {
+            throw new AssertionError("This code is unreachable");
+        }
     }
 }
