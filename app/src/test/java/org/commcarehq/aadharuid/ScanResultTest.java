@@ -32,6 +32,32 @@ public class ScanResultTest extends TestCase {
         assertEquals(scanResult.dob, "1999-11-23");
     }
 
+    public void testSheelXML() {
+        ScanResult scanResult = new ScanResult(
+                "</?xml version=\"1.0\" encoding=\"UTF-8\"?> " +
+                        "<PrintLetterBarcodeData uid=\"987098654123\" name=\"Mockit\" " +
+                        "gender=\"MALE\" yob=\"1989\" co=\"S/O Jhailendno Kaear Kuioy\" " +
+                        "lm=\"null\" loc=\"Vaishali Fiuhy\" vtc=\"Jaipur\" po=\"Vaishali Hugar\" " +
+                        "dist=\"Jaipur\" state=\"Rajasthan\" pc=\"345234\" dob=\"1989-06-07\"/>"
+        );
+        assertEquals(scanResult.uid, "987098654123");
+        assertEquals(scanResult.name, "Mockit");
+        assertEquals(scanResult.gender, "MALE");
+        assertEquals(scanResult.yob, "1989");
+        assertEquals(scanResult.co, "S/O Jhailendno Kaear Kuioy");
+        assertEquals(scanResult.house, "");
+        assertEquals(scanResult.street, "");
+        assertEquals(scanResult.lm, "null");
+        assertEquals(scanResult.loc, "Vaishali Fiuhy");
+        assertEquals(scanResult.vtc, "Jaipur");
+        assertEquals(scanResult.po, "Vaishali Hugar");
+        assertEquals(scanResult.dist, "Jaipur");
+        assertEquals(scanResult.subdist, "");
+        assertEquals(scanResult.state, "Rajasthan");
+        assertEquals(scanResult.pc, "345234");
+        assertEquals(scanResult.dob, "1989-06-07");
+    }
+
     public void testJustUID() {
         ScanResult scanResult = new ScanResult("123456789012");
         assertEquals(scanResult.uid, "123456789012");

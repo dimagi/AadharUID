@@ -59,7 +59,9 @@ public class ScanResult {
 
             //Using factory get an instance of document builder
             DocumentBuilder db = dbf.newDocumentBuilder();
-
+            if (input.startsWith("</?")) {
+                input = input.replaceFirst("</\\?", "<?");
+            }
             //parse using builder to get DOM representation of the XML file
             dom = db.parse(new ByteArrayInputStream(input.getBytes(StandardCharsets.UTF_8)));
 
