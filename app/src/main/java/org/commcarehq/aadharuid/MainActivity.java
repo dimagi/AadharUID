@@ -3,8 +3,8 @@ package org.commcarehq.aadharuid;
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
@@ -53,6 +53,7 @@ public class MainActivity extends ActionBarActivity {
         Intent data = new Intent();
 
         Bundle responses = new Bundle();
+        responses.putString("statusCode", Integer.toString(scanResult.statusCode));
         responses.putString("rawString", scanResult.rawString);
         responses.putString("uid", scanResult.uid);
         responses.putString("name", scanResult.name);

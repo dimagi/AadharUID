@@ -7,13 +7,14 @@ import junit.framework.TestCase;
  */
 public class ScanResultTest extends TestCase {
     public void testXML() {
-        ScanResult scanResult = new ScanResult(
-                "<PrintLetterBarcodeData uid=\"123456789012\" name=\"First Last\" gender=\"M/F\"" +
-                        " yob=\"YYYY\" co=\"D/O: Father Name\" house=\"house num\"" +
-                        " street=\"street name\" lm=\"address\" loc=\"neighborhood\" vtc=\"village\"" +
-                        " po=\"city\" dist=\"district\" subdist=\"region\" state=\"state\"" +
-                        " pc=\"postalcode\" dob=\"23/11/1999\"/>"
-        );
+        String rawString = "<PrintLetterBarcodeData uid=\"123456789012\" name=\"First Last\" gender=\"M/F\"" +
+                " yob=\"YYYY\" co=\"D/O: Father Name\" house=\"house num\"" +
+                " street=\"street name\" lm=\"address\" loc=\"neighborhood\" vtc=\"village\"" +
+                " po=\"city\" dist=\"district\" subdist=\"region\" state=\"state\"" +
+                " pc=\"postalcode\" dob=\"23/11/1999\"/>";
+        ScanResult scanResult = new ScanResult(rawString);
+        assertEquals(scanResult.statusCode, 0);
+        assertEquals(scanResult.rawString, rawString);
         assertEquals(scanResult.uid, "123456789012");
         assertEquals(scanResult.name, "First Last");
         assertEquals(scanResult.gender, "M/F");
@@ -33,13 +34,14 @@ public class ScanResultTest extends TestCase {
     }
 
     public void testSheelXML() {
-        ScanResult scanResult = new ScanResult(
-                "</?xml version=\"1.0\" encoding=\"UTF-8\"?> " +
-                        "<PrintLetterBarcodeData uid=\"987098654123\" name=\"Mockit\" " +
-                        "gender=\"MALE\" yob=\"1989\" co=\"S/O Jhailendno Kaear Kuioy\" " +
-                        "lm=\"null\" loc=\"Vaishali Fiuhy\" vtc=\"Jaipur\" po=\"Vaishali Hugar\" " +
-                        "dist=\"Jaipur\" state=\"Rajasthan\" pc=\"345234\" dob=\"1989-06-07\"/>"
-        );
+        String rawString = "</?xml version=\"1.0\" encoding=\"UTF-8\"?> " +
+                "<PrintLetterBarcodeData uid=\"987098654123\" name=\"Mockit\" " +
+                "gender=\"MALE\" yob=\"1989\" co=\"S/O Jhailendno Kaear Kuioy\" " +
+                "lm=\"null\" loc=\"Vaishali Fiuhy\" vtc=\"Jaipur\" po=\"Vaishali Hugar\" " +
+                "dist=\"Jaipur\" state=\"Rajasthan\" pc=\"345234\" dob=\"1989-06-07\"/>";
+        ScanResult scanResult = new ScanResult(rawString);
+        assertEquals(scanResult.statusCode, 0);
+        assertEquals(scanResult.rawString, rawString);
         assertEquals(scanResult.uid, "987098654123");
         assertEquals(scanResult.name, "Mockit");
         assertEquals(scanResult.gender, "MALE");
@@ -60,6 +62,8 @@ public class ScanResultTest extends TestCase {
 
     public void testJustUID() {
         ScanResult scanResult = new ScanResult("123456789012");
+        assertEquals(scanResult.statusCode, 0);
+        assertEquals(scanResult.rawString, "123456789012");
         assertEquals(scanResult.uid, "123456789012");
         assertEquals(scanResult.name, "");
         assertEquals(scanResult.gender, "");
@@ -79,9 +83,10 @@ public class ScanResultTest extends TestCase {
     }
 
     public void testBizarreInput() {
-        // Is this the behavior we want?
         ScanResult scanResult = new ScanResult("http://i.imgur.com/XpgmoU1.jpg");
-        assertEquals(scanResult.uid, "http://i.imgur.com/XpgmoU1.jpg");
+        assertEquals(scanResult.statusCode, 1);
+        assertEquals(scanResult.rawString, "http://i.imgur.com/XpgmoU1.jpg");
+        assertEquals(scanResult.uid, "");
         assertEquals(scanResult.name, "");
         assertEquals(scanResult.gender, "");
         assertEquals(scanResult.yob, "");
