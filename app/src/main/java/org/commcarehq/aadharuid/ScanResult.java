@@ -1,4 +1,5 @@
 package org.commcarehq.aadharuid;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
@@ -6,7 +7,6 @@ import org.xml.sax.SAXException;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -23,6 +23,9 @@ import javax.xml.parsers.ParserConfigurationException;
  *  dob="dd/mm/yyyy"/>
  */
 public class ScanResult {
+    public static final int STATUS_SUCCESS = 0;
+    public static final int STATUS_PARSE_ERROR = 1;
+    public final int statusCode;
     public final String rawString;
     public final String uid;
     public final String name;
@@ -59,17 +62,20 @@ public class ScanResult {
 
             //Using factory get an instance of document builder
             DocumentBuilder db = dbf.newDocumentBuilder();
-
+            if (input.startsWith("</?")) {
+                input = input.replaceFirst("</\\?", "<?");
+            }
             //parse using builder to get DOM representation of the XML file
-            dom = db.parse(new ByteArrayInputStream(input.getBytes(StandardCharsets.UTF_8)));
+            dom = db.parse(new ByteArrayInputStream(input.getBytes("UTF-8")));
 
 
-        } catch(ParserConfigurationException|SAXException|IOException e) {
+        } catch (ParserConfigurationException | SAXException | IOException e) {
             dom = null;
         }
         if (dom != null) {
             Node node = dom.getChildNodes().item(0);
             NamedNodeMap attributes = node.getAttributes();
+            statusCode = STATUS_SUCCESS;
             uid = getAttributeOrEmptyString(attributes, "uid");
             name = getAttributeOrEmptyString(attributes, "name");
             gender = getAttributeOrEmptyString(attributes, "gender");
@@ -89,11 +95,30 @@ public class ScanResult {
             try {
                 rawDob = formatDate(rawDob);
             } catch (ParseException e) {
-                System.err.println("Expected dob to be in dd/mm/yyyy format, got " + rawDob);
+                System.err.println("Expected dob to be in dd/mm/yyyy or yyyy-mm-dd format, got " + rawDob);
             }
             dob = rawDob;
-        } else {
+        } else if (rawString.matches("\\d{12}")) {
+            statusCode = STATUS_SUCCESS;
             uid = rawString;
+            name = "";
+            gender = "";
+            yob = "";
+            co = "";
+            house = "";
+            street = "";
+            lm = "";
+            loc = "";
+            vtc = "";
+            po = "";
+            dist = "";
+            subdist = "";
+            state = "";
+            pc = "";
+            dob = "";
+        } else {
+            statusCode = STATUS_PARSE_ERROR;
+            uid = "";
             name = "";
             gender = "";
             yob = "";
@@ -113,9 +138,26 @@ public class ScanResult {
     }
 
     private String formatDate(String rawDateString) throws ParseException {
-        SimpleDateFormat fromFormat = new SimpleDateFormat("dd/MM/yyyy");
         SimpleDateFormat toFormat = new SimpleDateFormat("yyyy-MM-dd");
-        Date date = fromFormat.parse(rawDateString);
-        return toFormat.format(date);
+        SimpleDateFormat[] possibleFormats = {
+                new SimpleDateFormat("dd/MM/yyyy"),
+                new SimpleDateFormat("yyyy-MM-dd")};
+        Date date = null;
+        ParseException parseException = null;
+        for (SimpleDateFormat fromFormat : possibleFormats) {
+            try {
+                date = fromFormat.parse(rawDateString);
+                break;
+            } catch (ParseException e) {
+                parseException = e;
+            }
+        }
+        if (date != null) {
+            return toFormat.format(date);
+        } else if (parseException != null){
+            throw parseException;
+        } else {
+            throw new AssertionError("This code is unreachable");
+        }
     }
 }

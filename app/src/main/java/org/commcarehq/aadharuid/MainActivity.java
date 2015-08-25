@@ -3,8 +3,8 @@ package org.commcarehq.aadharuid;
 import android.app.Activity;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
-import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
@@ -53,6 +53,7 @@ public class MainActivity extends ActionBarActivity {
         Intent data = new Intent();
 
         Bundle responses = new Bundle();
+        responses.putString("statusCode", Integer.toString(scanResult.statusCode));
         responses.putString("rawString", scanResult.rawString);
         responses.putString("uid", scanResult.uid);
         responses.putString("name", scanResult.name);
@@ -72,10 +73,15 @@ public class MainActivity extends ActionBarActivity {
         responses.putString("dob", scanResult.dob);
 
         data.putExtra("odk_intent_bundle", responses);
+        switch (scanResult.statusCode) {
+            case ScanResult.STATUS_SUCCESS:
+                data.putExtra("odk_intent_data", "✓");
+                break;
+            default:
+                data.putExtra("odk_intent_data", "✗");
+                break;
+        }
 
-        // We do not want anything to display directly to the user when this returns to ODK
-        // For the full string, use odk_intent_bundle.rawString
-        data.putExtra("odk_intent_data", "");
         setResult(Activity.RESULT_OK, data);
         finish();
     }
