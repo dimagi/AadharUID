@@ -73,10 +73,15 @@ public class MainActivity extends ActionBarActivity {
         responses.putString("dob", scanResult.dob);
 
         data.putExtra("odk_intent_bundle", responses);
+        switch (scanResult.statusCode) {
+            case ScanResult.STATUS_SUCCESS:
+                data.putExtra("odk_intent_data", "✓");
+                break;
+            default:
+                data.putExtra("odk_intent_data", "✗");
+                break;
+        }
 
-        // We do not want anything to display directly to the user when this returns to ODK
-        // For the full string, use odk_intent_bundle.rawString
-        data.putExtra("odk_intent_data", "");
         setResult(Activity.RESULT_OK, data);
         finish();
     }
