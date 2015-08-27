@@ -44,7 +44,7 @@ public class ScanResultTest extends TestCase {
         assertEquals(scanResult.rawString, rawString);
         assertEquals(scanResult.uid, "987098654123");
         assertEquals(scanResult.name, "Mockit");
-        assertEquals(scanResult.gender, "MALE");
+        assertEquals(scanResult.gender, "M");
         assertEquals(scanResult.yob, "1989");
         assertEquals(scanResult.co, "S/O Jhailendno Kaear Kuioy");
         assertEquals(scanResult.house, "");
