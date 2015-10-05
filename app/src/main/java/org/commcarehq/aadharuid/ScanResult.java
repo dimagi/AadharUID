@@ -78,7 +78,13 @@ public class ScanResult {
             statusCode = STATUS_SUCCESS;
             uid = getAttributeOrEmptyString(attributes, "uid");
             name = getAttributeOrEmptyString(attributes, "name");
-            gender = getAttributeOrEmptyString(attributes, "gender");
+            String rawGender = getAttributeOrEmptyString(attributes, "gender");
+            try {
+                rawGender = formatGender(rawGender);
+            } catch (ParseException e) {
+                System.err.println("Expected gender to be one of m, f, male, female; got " + rawGender);
+            }
+            gender = rawGender;
             yob = getAttributeOrEmptyString(attributes, "yob");
             co = getAttributeOrEmptyString(attributes, "co");
             house = getAttributeOrEmptyString(attributes, "house");
@@ -137,7 +143,7 @@ public class ScanResult {
         }
     }
 
-    private String formatDate(String rawDateString) throws ParseException {
+    protected String formatDate(String rawDateString) throws ParseException {
         SimpleDateFormat toFormat = new SimpleDateFormat("yyyy-MM-dd");
         SimpleDateFormat[] possibleFormats = {
                 new SimpleDateFormat("dd/MM/yyyy"),
@@ -158,6 +164,17 @@ public class ScanResult {
             throw parseException;
         } else {
             throw new AssertionError("This code is unreachable");
+        }
+    }
+
+    protected String formatGender(String gender) throws ParseException {
+        String lowercaseGender = gender.toLowerCase();
+        if (lowercaseGender.equals("male") || lowercaseGender.equals("m")) {
+            return "M";
+        } else if (lowercaseGender.equals("female") || lowercaseGender.equals("f")) {
+            return "F";
+        } else {
+            throw new ParseException("404 gender not found", 0);
         }
     }
 }
