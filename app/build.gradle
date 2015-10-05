@@ -15,6 +15,15 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
+        }
+    }
+    signingConfigs {
+        release {
+            storeFile file(project.ext.RELEASE_STORE_FILE)
+            storePassword project.ext.RELEASE_STORE_PASSWORD
+            keyAlias project.ext.RELEASE_KEY_ALIAS
+            keyPassword project.ext.RELEASE_KEY_PASSWORD
         }
     }
 }
