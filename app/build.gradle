@@ -1,5 +1,19 @@
 apply plugin: 'com.android.application'
 
+ext {
+    // Obtained from ~/.gradle/gradle.properites on build server or load default
+    // empty strings.
+    RELEASE_STORE_FILE = project.properties['RELEASE_STORE_FILE'] ?: "."
+    RELEASE_STORE_PASSWORD = project.properties['RELEASE_STORE_PASSWORD'] ?: ""
+    RELEASE_KEY_ALIAS = project.properties['RELEASE_KEY_ALIAS'] ?: ""
+    RELEASE_KEY_PASSWORD = project.properties['RELEASE_KEY_PASSWORD'] ?: ""
+    TRUSTED_SOURCE_PUBLIC_KEY = project.properties['TRUSTED_SOURCE_PUBLIC_KEY'] ?:
+            "MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQDHiuy2ULV4pobkuQN2TEjmR1tn" +
+                    "HJ+F335hm/lVdaFQzvBmeq64MUMbumheVLDJaSUiAVzqSHDKJWH01ZQRowqBYjwo" +
+                    "ycVSQSeO2glc6XZZ+CJudAPXe8iFWLQp3kBBnBmVcBXCOQFO7aLgQMv4nqKZsLW0" +
+                    "HaAJkjpnc165Os+aYwIDAQAB";
+}
+
 android {
     compileSdkVersion 22
     buildToolsVersion "22.0.1"
@@ -11,10 +25,19 @@ android {
         versionCode 1
         versionName "1.0"
     }
+    signingConfigs {
+        release {
+            storeFile file(project.ext.RELEASE_STORE_FILE)
+            storePassword project.ext.RELEASE_STORE_PASSWORD
+            keyAlias project.ext.RELEASE_KEY_ALIAS
+            keyPassword project.ext.RELEASE_KEY_PASSWORD
+        }
+    }
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
         }
     }
 }
