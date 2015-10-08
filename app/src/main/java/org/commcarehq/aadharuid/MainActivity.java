@@ -30,6 +30,8 @@ public class MainActivity extends ActionBarActivity {
                     returnOdkResult(result);
                     break;
                 case RESULT_CANCELED:
+                    setResult(Activity.RESULT_CANCELED);
+                    finish();
                     break;
             }
 
