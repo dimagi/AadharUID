@@ -50,39 +50,14 @@ public class MainActivity extends ActionBarActivity {
 
     private void returnOdkResult(String result) {
         ScanResult scanResult = new ScanResult(result);
-        Intent data = new Intent();
-
-        Bundle responses = new Bundle();
-        responses.putString("statusCode", Integer.toString(scanResult.statusCode));
-        responses.putString("rawString", scanResult.rawString);
-        responses.putString("uid", scanResult.uid);
-        responses.putString("name", scanResult.name);
-        responses.putString("gender", scanResult.gender);
-        responses.putString("yob", scanResult.yob);
-        responses.putString("co", scanResult.co);
-        responses.putString("house", scanResult.house);
-        responses.putString("street", scanResult.street);
-        responses.putString("lm", scanResult.lm);
-        responses.putString("loc", scanResult.loc);
-        responses.putString("vtc", scanResult.vtc);
-        responses.putString("po", scanResult.po);
-        responses.putString("dist", scanResult.dist);
-        responses.putString("subdist", scanResult.subdist);
-        responses.putString("state", scanResult.state);
-        responses.putString("pc", scanResult.pc);
-        responses.putString("dob", scanResult.dob);
-
-        data.putExtra("odk_intent_bundle", responses);
-        switch (scanResult.statusCode) {
-            case ScanResult.STATUS_SUCCESS:
-                data.putExtra("odk_intent_data", "✓");
-                break;
-            default:
-                data.putExtra("odk_intent_data", "✗");
-                break;
+        ScanResultResponseAdapter responseAdapter = new ScanResultResponseAdapter(scanResult, getIntent());
+        if (responseAdapter.getHasOdkIntentDataFieldError()) {
+            Toast.makeText(this,
+                    getResources().getString(R.string.odk_intent_data_field_error)
+                            + " " + responseAdapter.getOdkIntentDataField(),
+                    Toast.LENGTH_SHORT).show();
         }
-
-        setResult(Activity.RESULT_OK, data);
+        setResult(Activity.RESULT_OK, responseAdapter.getResponseIntent());
         finish();
     }
 
