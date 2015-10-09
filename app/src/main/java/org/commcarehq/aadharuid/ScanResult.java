@@ -1,5 +1,7 @@
 package org.commcarehq.aadharuid;
 
+import android.support.annotation.NonNull;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
@@ -43,6 +45,8 @@ public class ScanResult {
     public final String state;
     public final String pc;  // postal code
     public final String dob;  // date of birth
+    public final String dobGuess;  // date of birth or June 1 of year of birth
+    public final String statusText;  // either `"✓"` (success) or `"✗"` (any failure)
 
     private String getAttributeOrEmptyString(NamedNodeMap attributes, String attributeName) {
         Node node = attributes.getNamedItem(attributeName);
@@ -141,9 +145,14 @@ public class ScanResult {
             pc = "";
             dob = "";
         }
+        dobGuess = getDobGuess(dob, yob);
+        statusText = getStatusText(statusCode);
     }
 
     protected String formatDate(String rawDateString) throws ParseException {
+        if (rawDateString.equals("")) {
+            return "";
+        }
         SimpleDateFormat toFormat = new SimpleDateFormat("yyyy-MM-dd");
         SimpleDateFormat[] possibleFormats = {
                 new SimpleDateFormat("dd/MM/yyyy"),
@@ -167,14 +176,43 @@ public class ScanResult {
         }
     }
 
+    @NonNull
     protected String formatGender(String gender) throws ParseException {
         String lowercaseGender = gender.toLowerCase();
         if (lowercaseGender.equals("male") || lowercaseGender.equals("m")) {
             return "M";
         } else if (lowercaseGender.equals("female") || lowercaseGender.equals("f")) {
             return "F";
+        } else if (lowercaseGender.equals("other") || lowercaseGender.equals("o")) {
+            return "O";
         } else {
             throw new ParseException("404 gender not found", 0);
+        }
+    }
+
+    @NonNull
+    private String getStatusText(int statusCode) {
+        switch (statusCode) {
+            case ScanResult.STATUS_SUCCESS:
+                return "✓";
+            default:
+                return "✗";
+        }
+    }
+
+    @NonNull
+    private String getDobGuess(String dob, String yob) {
+        if (dob.equals("")) {
+            Integer yearInt;
+            try {
+                yearInt = Integer.parseInt(yob);
+            } catch (NumberFormatException e) {
+                return "";
+            }
+            // June 1 of the year
+            return Integer.toString(yearInt) + "-06-01";
+        } else {
+            return dob;
         }
     }
 }

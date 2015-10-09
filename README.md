@@ -40,6 +40,7 @@ This bundle will contain the following fields:
   - `co`
   - `dist`
   - `dob` normalized to YYYY-MM-DD
+  - `dobGuess` dob if provided or else yob-06-01
   - `gender` normalized to `M` or `F`
   - `house`
   - `lm`
