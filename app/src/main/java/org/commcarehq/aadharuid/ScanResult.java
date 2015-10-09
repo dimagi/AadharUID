@@ -45,6 +45,7 @@ public class ScanResult {
     public final String state;
     public final String pc;  // postal code
     public final String dob;  // date of birth
+    public final String dobGuess;  // date of birth or June 1 of year of birth
     public final String statusText;  // either `"✓"` (success) or `"✗"` (any failure)
 
     private String getAttributeOrEmptyString(NamedNodeMap attributes, String attributeName) {
@@ -144,10 +145,14 @@ public class ScanResult {
             pc = "";
             dob = "";
         }
+        dobGuess = getDobGuess(dob, yob);
         statusText = getStatusText(statusCode);
     }
 
     protected String formatDate(String rawDateString) throws ParseException {
+        if (rawDateString.equals("")) {
+            return "";
+        }
         SimpleDateFormat toFormat = new SimpleDateFormat("yyyy-MM-dd");
         SimpleDateFormat[] possibleFormats = {
                 new SimpleDateFormat("dd/MM/yyyy"),
@@ -190,6 +195,22 @@ public class ScanResult {
                 return "✓";
             default:
                 return "✗";
+        }
+    }
+
+    @NonNull
+    private String getDobGuess(String dob, String yob) {
+        if (dob.equals("")) {
+            Integer yearInt;
+            try {
+                yearInt = Integer.parseInt(yob);
+            } catch (NumberFormatException e) {
+                return "";
+            }
+            // June 1 of the year
+            return Integer.toString(yearInt) + "-06-01";
+        } else {
+            return dob;
         }
     }
 }

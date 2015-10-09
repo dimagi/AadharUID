@@ -62,6 +62,7 @@ public class ScanResultResponseAdapter {
         responses.putString("state", scanResult.state);
         responses.putString("pc", scanResult.pc);
         responses.putString("dob", scanResult.dob);
+        responses.putString("dobGuess", scanResult.dobGuess);
 
         String odkIntentData = responses.getString(odkIntentDataField);
         responseIntent.putExtra("odk_intent_bundle", responses);
