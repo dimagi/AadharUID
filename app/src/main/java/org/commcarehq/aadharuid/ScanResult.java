@@ -183,6 +183,8 @@ public class ScanResult {
             return "M";
         } else if (lowercaseGender.equals("female") || lowercaseGender.equals("f")) {
             return "F";
+        } else if (lowercaseGender.equals("other") || lowercaseGender.equals("o")) {
+            return "O";
         } else {
             throw new ParseException("404 gender not found", 0);
         }
