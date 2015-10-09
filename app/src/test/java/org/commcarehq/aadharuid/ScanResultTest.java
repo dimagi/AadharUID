@@ -14,6 +14,7 @@ public class ScanResultTest extends TestCase {
                 " pc=\"postalcode\" dob=\"23/11/1999\"/>";
         ScanResult scanResult = new ScanResult(rawString);
         assertEquals(scanResult.statusCode, 0);
+        assertEquals(scanResult.statusText, "✓");
         assertEquals(scanResult.rawString, rawString);
         assertEquals(scanResult.uid, "123456789012");
         assertEquals(scanResult.name, "First Last");
@@ -41,6 +42,7 @@ public class ScanResultTest extends TestCase {
                 "dist=\"Jaipur\" state=\"Rajasthan\" pc=\"345234\" dob=\"1989-06-07\"/>";
         ScanResult scanResult = new ScanResult(rawString);
         assertEquals(scanResult.statusCode, 0);
+        assertEquals(scanResult.statusText, "✓");
         assertEquals(scanResult.rawString, rawString);
         assertEquals(scanResult.uid, "987098654123");
         assertEquals(scanResult.name, "Mockit");
@@ -63,6 +65,7 @@ public class ScanResultTest extends TestCase {
     public void testJustUID() {
         ScanResult scanResult = new ScanResult("123456789012");
         assertEquals(scanResult.statusCode, 0);
+        assertEquals(scanResult.statusText, "✓");
         assertEquals(scanResult.rawString, "123456789012");
         assertEquals(scanResult.uid, "123456789012");
         assertEquals(scanResult.name, "");
@@ -85,6 +88,7 @@ public class ScanResultTest extends TestCase {
     public void testBizarreInput() {
         ScanResult scanResult = new ScanResult("http://i.imgur.com/XpgmoU1.jpg");
         assertEquals(scanResult.statusCode, 1);
+        assertEquals(scanResult.statusText, "✗");
         assertEquals(scanResult.rawString, "http://i.imgur.com/XpgmoU1.jpg");
         assertEquals(scanResult.uid, "");
         assertEquals(scanResult.name, "");

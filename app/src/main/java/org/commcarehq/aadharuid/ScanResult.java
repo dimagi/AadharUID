@@ -1,5 +1,7 @@
 package org.commcarehq.aadharuid;
 
+import android.support.annotation.NonNull;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
@@ -43,6 +45,7 @@ public class ScanResult {
     public final String state;
     public final String pc;  // postal code
     public final String dob;  // date of birth
+    public final String statusText;  // either `"✓"` (success) or `"✗"` (any failure)
 
     private String getAttributeOrEmptyString(NamedNodeMap attributes, String attributeName) {
         Node node = attributes.getNamedItem(attributeName);
@@ -141,6 +144,7 @@ public class ScanResult {
             pc = "";
             dob = "";
         }
+        statusText = getStatusText(statusCode);
     }
 
     protected String formatDate(String rawDateString) throws ParseException {
@@ -167,6 +171,7 @@ public class ScanResult {
         }
     }
 
+    @NonNull
     protected String formatGender(String gender) throws ParseException {
         String lowercaseGender = gender.toLowerCase();
         if (lowercaseGender.equals("male") || lowercaseGender.equals("m")) {
@@ -175,6 +180,16 @@ public class ScanResult {
             return "F";
         } else {
             throw new ParseException("404 gender not found", 0);
+        }
+    }
+
+    @NonNull
+    private String getStatusText(int statusCode) {
+        switch (statusCode) {
+            case ScanResult.STATUS_SUCCESS:
+                return "✓";
+            default:
+                return "✗";
         }
     }
 }
