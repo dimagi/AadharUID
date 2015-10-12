@@ -149,10 +149,11 @@ public class ScanResultTest extends TestCase {
                 "dist=\"Jaipur\" state=\"Rajasthan\" pc=\"345234\" dob=\"1989-06-07\"/>";
         ScanResult scanResult = new ScanResult(rawString);
         assertEquals(scanResult.statusCode, 0);
+        assertEquals(scanResult.statusText, "✓");
         assertEquals(scanResult.rawString, rawString);
         assertEquals(scanResult.uid, "987098654123");
         assertEquals(scanResult.name, "Mockit");
-        assertEquals(scanResult.gender, "MALE");
+        assertEquals(scanResult.gender, "M");
         assertEquals(scanResult.yob, "1989");
         assertEquals(scanResult.co, "S/O Jhailendno Kaear Kuioy");
         assertEquals(scanResult.house, "");
@@ -166,5 +167,6 @@ public class ScanResultTest extends TestCase {
         assertEquals(scanResult.state, "Rajasthan");
         assertEquals(scanResult.pc, "345234");
         assertEquals(scanResult.dob, "1989-06-07");
+        assertEquals(scanResult.dobGuess, "1989-06-07");
     }
 }
