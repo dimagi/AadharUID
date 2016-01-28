@@ -2,8 +2,10 @@ language: android
 script: "./gradlew check"
 android:
   components:
-    - android-22
-    - build-tools-22.0.1
+    - platform-tools
+    - tools
+    - build-tools-23.0.2
+    - android-23
     - extra-android-m2repository
 before_cache:
   - rm -f $HOME/.gradle/caches/modules-2/modules-2.lock
