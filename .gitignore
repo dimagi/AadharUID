@@ -27,7 +27,9 @@ proguard/
 *.log
 
 
-/.idea/workspace.xml
-/.idea/libraries
+# Android Studio
+/.idea/*
 .DS_Store
 /captures
+*.iml
+
