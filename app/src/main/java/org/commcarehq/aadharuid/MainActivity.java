@@ -1,7 +1,6 @@
 package org.commcarehq.aadharuid;
 
 import android.app.Activity;
-import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -9,10 +8,11 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.google.zxing.integration.android.IntentIntegrator;
+import com.google.zxing.integration.android.IntentResult;
+
 
 public class MainActivity extends AppCompatActivity {
-
-    int BARCODE_CODE = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,32 +30,30 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == BARCODE_CODE) {
-            switch (resultCode) {
-                case RESULT_OK:
-                    String result = data.getStringExtra("SCAN_RESULT");
-                    returnOdkResult(result);
-                    break;
-                case RESULT_CANCELED:
+
+        if (requestCode == IntentIntegrator.REQUEST_CODE) {
+            IntentResult intentResult = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
+            if (intentResult != null) {
+                if (intentResult.getContents() == null) {
                     setResult(Activity.RESULT_CANCELED);
                     finish();
-                    break;
+                } else {
+                    String result = intentResult.getContents();
+                    returnOdkResult(result);
+                }
             }
-
+        } else {
+            super.onActivityResult(requestCode, resultCode, data);
         }
-        super.onActivityResult(requestCode, resultCode, data);
     }
 
     private void callBarcodeScanner() {
-        Intent intent = new Intent("com.google.zxing.client.android.SCAN");
-        try {
-            this.startActivityForResult(intent, BARCODE_CODE);
-        } catch (ActivityNotFoundException e) {
-            Toast.makeText(this,
-                    getResources().getString(R.string.barcode_scanner_error),
-                    Toast.LENGTH_SHORT).show();
-        }
+        Intent intent = new IntentIntegrator(this)
+                .setDesiredBarcodeFormats(IntentIntegrator.QR_CODE)
+                .createScanIntent();
+        startActivityForResult(intent, IntentIntegrator.REQUEST_CODE);
     }
+
 
     private void returnOdkResult(String result) {
         ScanResult scanResult = new ScanResult(result);
