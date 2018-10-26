@@ -44,4 +44,7 @@ android {
 dependencies {
     testCompile 'junit:junit:3.8'
     compile 'com.android.support:appcompat-v7:28.0.0'
+    compile('com.journeyapps:zxing-android-embedded:3.6.0') { transitive = false }
+    // Don't update this untill we are supporting pre-19 devices
+    compile 'com.google.zxing:core:3.3.0'
 }
