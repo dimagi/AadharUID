@@ -45,7 +45,7 @@ public class ScanResultResponseAdapter {
         responses.putString("statusCode", Integer.toString(scanResult.statusCode));
         responses.putString("statusText", scanResult.statusText);
         responses.putString("rawString", scanResult.rawString);
-
+        responses.putString("type", scanResult.type);
         responses.putString("uid", scanResult.uid);
         responses.putString("name", scanResult.name);
         responses.putString("gender", scanResult.gender);

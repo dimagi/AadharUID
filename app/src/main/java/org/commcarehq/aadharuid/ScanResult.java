@@ -34,6 +34,11 @@ public class ScanResult {
     public static final int STATUS_PARSE_ERROR = 1;
     private static final int NUMBER_OF_PARAMS_IN_SECURE_QR_CODE = 15;
 
+    public static final String QR_CODE_TYPE_SECURE = "secure";
+    public static final String QR_CODE_TYPE_XML = "xml";
+    public static final String QR_CODE_TYPE_UID_NUMBER = "uid_number";
+    public static final String QR_CODE_TYPE_UNKNOWN = "unknown";
+
     public final int statusCode;
     public final String rawString;
     public final String uid;
@@ -54,6 +59,7 @@ public class ScanResult {
     public final String dob;  // date of birth
     public final String dobGuess;  // date of birth or June 1 of year of birth
     public final String statusText;  // either `"✓"` (success) or `"✗"` (any failure)
+    public final String type;  // either `"✓"` (success) or `"✗"` (any failure)
 
     private String getAttributeOrEmptyString(NamedNodeMap attributes, String attributeName) {
         Node node = attributes.getNamedItem(attributeName);
@@ -88,6 +94,7 @@ public class ScanResult {
         }
 
         if (dom != null) {
+            type = QR_CODE_TYPE_XML;
             Node node = dom.getChildNodes().item(0);
             NamedNodeMap attributes = node.getAttributes();
             statusCode = STATUS_SUCCESS;
@@ -120,6 +127,7 @@ public class ScanResult {
             }
             dob = rawDob;
         } else if (rawString.matches("\\d{12}")) {
+            type = QR_CODE_TYPE_UID_NUMBER;
             statusCode = STATUS_SUCCESS;
             uid = rawString;
             name = "";
@@ -138,7 +146,7 @@ public class ScanResult {
             pc = "";
             dob = "";
         } else if (rawString.matches("[0-9]*")) {
-
+            type = QR_CODE_TYPE_SECURE;
             byte[] msgInBytes = null;
             try {
                 msgInBytes = decompressByteArray(new BigInteger(rawString).toByteArray());
@@ -185,6 +193,7 @@ public class ScanResult {
                 dob = "";
             }
         } else {
+            type = QR_CODE_TYPE_UNKNOWN;
             statusCode = STATUS_PARSE_ERROR;
             uid = "";
             name = "";
