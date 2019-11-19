@@ -156,7 +156,7 @@ public class ScanResult {
             if (msgInBytes != null) {
                 int[] delimiters = locateDelimiters(msgInBytes);
                 String referenceId = getValueInRange(msgInBytes, delimiters[0] + 1, delimiters[1]);
-                uid = "xxxxxxxx" + referenceId.substring(0, 4);
+                uid = referenceId.substring(0, 4);
                 name = getValueInRange(msgInBytes, delimiters[1] + 1, delimiters[2]);
                 dob = getValueInRange(msgInBytes, delimiters[2] + 1, delimiters[3]);
                 yob = dob.substring(dob.length() - 4);
