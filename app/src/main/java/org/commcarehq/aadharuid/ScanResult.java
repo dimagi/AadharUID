@@ -119,13 +119,9 @@ public class ScanResult {
             subdist = getAttributeOrEmptyString(attributes, "subdist");
             state = getAttributeOrEmptyString(attributes, "state");
             pc = getAttributeOrEmptyString(attributes, "pc");
-            String rawDob = getAttributeOrEmptyString(attributes, "dob");
-            try {
-                rawDob = formatDate(rawDob);
-            } catch (ParseException e) {
-                System.err.println("Expected dob to be in dd/mm/yyyy or yyyy-mm-dd format, got " + rawDob);
-            }
-            dob = rawDob;
+            dob= formatDate(getAttributeOrEmptyString(attributes, "dob"),
+                    new String[] {"dd/MM/yyyy", "yyyy-MM-dd"});
+
         } else if (rawString.matches("\\d{12}")) {
             type = QR_CODE_TYPE_UID_NUMBER;
             statusCode = STATUS_SUCCESS;
@@ -158,8 +154,9 @@ public class ScanResult {
                 String referenceId = getValueInRange(msgInBytes, delimiters[0] + 1, delimiters[1]);
                 uid = referenceId.substring(0, 4);
                 name = getValueInRange(msgInBytes, delimiters[1] + 1, delimiters[2]);
-                dob = getValueInRange(msgInBytes, delimiters[2] + 1, delimiters[3]);
-                yob = dob.substring(dob.length() - 4);
+                dob = formatDate(getValueInRange(msgInBytes, delimiters[2] + 1, delimiters[3]),
+                        new String[] {"dd-MM-yyyy", "dd/MM/yyyy"});
+                yob = dob.substring(0, 4);
                 gender = getValueInRange(msgInBytes, delimiters[3] + 1, delimiters[4]);
                 co = getValueInRange(msgInBytes, delimiters[4] + 1, delimiters[5]);
                 dist = getValueInRange(msgInBytes, delimiters[5] + 1, delimiters[6]);
@@ -260,18 +257,16 @@ public class ScanResult {
         return byteout.toByteArray();
     }
 
-    protected String formatDate(String rawDateString) throws ParseException {
+    private String formatDate(String rawDateString, String[] possibleFormats) {
         if (rawDateString.equals("")) {
             return "";
         }
         SimpleDateFormat toFormat = new SimpleDateFormat("yyyy-MM-dd");
-        SimpleDateFormat[] possibleFormats = {
-                new SimpleDateFormat("dd/MM/yyyy"),
-                new SimpleDateFormat("yyyy-MM-dd")};
         Date date = null;
         ParseException parseException = null;
-        for (SimpleDateFormat fromFormat : possibleFormats) {
+        for (String fromFormatPattern : possibleFormats) {
             try {
+                SimpleDateFormat fromFormat = new SimpleDateFormat(fromFormatPattern);
                 date = fromFormat.parse(rawDateString);
                 break;
             } catch (ParseException e) {
@@ -281,7 +276,8 @@ public class ScanResult {
         if (date != null) {
             return toFormat.format(date);
         } else if (parseException != null) {
-            throw parseException;
+            System.err.println("Expected dob to be in dd/mm/yyyy or yyyy-mm-dd format, got " + rawDateString);
+            return rawDateString;
         } else {
             throw new AssertionError("This code is unreachable");
         }
