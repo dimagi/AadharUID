@@ -200,7 +200,7 @@ public class ScanResultTest extends TestCase {
         assertEquals(scanResult.subdist, "Karapa");
         assertEquals(scanResult.state, "Andhra Pradesh");
         assertEquals(scanResult.pc, "533016");
-        assertEquals(scanResult.dob, "07-05-1987");
-        assertEquals(scanResult.dobGuess, "07-05-1987");
+        assertEquals(scanResult.dob, "1987-05-07");
+        assertEquals(scanResult.dobGuess, "1987-05-07");
     }
 }
