@@ -49,17 +49,20 @@ public class ScanResult {
     public final String house;
     public final String street;
     public final String lm;  // address
-    public final String loc;  // neighborhood
+    public String loc;  // neighborhood
     public final String vtc;  // village
     public final String po;  // city
-    public final String dist;  // district
+    public String dist;  // district
     public final String subdist;  // region
     public final String state;
-    public final String pc;  // postal code
-    public final String dob;  // date of birth
+    public String pc;  // postal code
+    public String dob;  // date of birth
     public final String dobGuess;  // date of birth or June 1 of year of birth
     public final String statusText;  // either `"✓"` (success) or `"✗"` (any failure)
     public final String type;  // either `"✓"` (success) or `"✗"` (any failure)
+
+    // all 4 date formats are possible and exist in reality
+    private final String[] possibleDateFormats = new String[] {"dd/MM/yyyy", "yyyy-MM-dd", "dd-MM-yyyy", "yyyy/MM/dd"};
 
     private String getAttributeOrEmptyString(NamedNodeMap attributes, String attributeName) {
         Node node = attributes.getNamedItem(attributeName);
@@ -72,7 +75,6 @@ public class ScanResult {
 
     public ScanResult(String input) {
         rawString = input;
-
         // copied from http://www.java-samples.com/showtutorial.php?tutorialid=152
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
         Document dom;
@@ -113,14 +115,31 @@ public class ScanResult {
             street = getAttributeOrEmptyString(attributes, "street");
             lm = getAttributeOrEmptyString(attributes, "lm");
             loc = getAttributeOrEmptyString(attributes, "loc");
+            // some non secure AADHAAR cards have loc and some have locality property
+            if (loc == null || loc.equals("")) {
+                loc = getAttributeOrEmptyString(attributes, "locality");
+            }
             vtc = getAttributeOrEmptyString(attributes, "vtc");
             po = getAttributeOrEmptyString(attributes, "po");
             dist = getAttributeOrEmptyString(attributes, "dist");
+            // some non secure AADHAAR cards have dist and some have districtName property
+            if (dist == null || dist.equals("")) {
+                dist = getAttributeOrEmptyString(attributes, "districtName");
+            }
             subdist = getAttributeOrEmptyString(attributes, "subdist");
             state = getAttributeOrEmptyString(attributes, "state");
             pc = getAttributeOrEmptyString(attributes, "pc");
-            dob= formatDate(getAttributeOrEmptyString(attributes, "dob"),
-                    new String[] {"dd/MM/yyyy", "yyyy-MM-dd"});
+            // some non secure AADHAAR cards have pc and some have pincode property
+            if (pc == null || pc.equals("")) {
+                pc = getAttributeOrEmptyString(attributes, "pincode");
+            }
+            dob = formatDate(getAttributeOrEmptyString(attributes, "dob"),
+                    possibleDateFormats);
+            // some non secure AADHAAR cards have dob and some have dateOfBirth property
+            if (dob == null || dob.equals("")) {
+                dob = formatDate(getAttributeOrEmptyString(attributes, "dateOfBirth"),
+                        possibleDateFormats);
+            }
 
         } else if (rawString.matches("\\d{12}")) {
             type = QR_CODE_TYPE_UID_NUMBER;
@@ -155,7 +174,7 @@ public class ScanResult {
                 uid = referenceId.substring(0, 4);
                 name = getValueInRange(msgInBytes, delimiters[1] + 1, delimiters[2]);
                 dob = formatDate(getValueInRange(msgInBytes, delimiters[2] + 1, delimiters[3]),
-                        new String[] {"dd-MM-yyyy", "dd/MM/yyyy"});
+                        possibleDateFormats);
                 yob = dob.substring(0, 4);
                 gender = getValueInRange(msgInBytes, delimiters[3] + 1, delimiters[4]);
                 co = getValueInRange(msgInBytes, delimiters[4] + 1, delimiters[5]);
@@ -267,6 +286,11 @@ public class ScanResult {
         for (String fromFormatPattern : possibleFormats) {
             try {
                 SimpleDateFormat fromFormat = new SimpleDateFormat(fromFormatPattern);
+                /**
+                 * to make sure that issue like this - https://stackoverflow.com/questions/30252716/simpledateformat-parse-generates-wrong-date-for-different-date-formats
+                 * doesn't happen
+                 */
+                fromFormat.setLenient(false);
                 date = fromFormat.parse(rawDateString);
                 break;
             } catch (ParseException e) {
